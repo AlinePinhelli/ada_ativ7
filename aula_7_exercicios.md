@@ -15,6 +15,17 @@ group by category_id
 Busque todas as informações sobre os produtos que nunca foram comprados (inclusive a descrição da categoria e todos os dados do fornecedor).
 
 ```sql
+SELECT
+    p.*,
+	s.supplier_name, s.supplier_email, s.supplier_phone, s.supplier_address
+FROM
+    products p
+JOIN
+    categories c ON p.category_id = c.category_id
+JOIN
+	suppliers s ON s.supplier_id = p.supplier_id
+WHERE
+    p.product_id NOT IN (SELECT product_id FROM order_items);
 
 ```
 
@@ -25,6 +36,17 @@ Encontre os top 5 clientes que mais gastaram dinheiro em compras, exibindo o nom
 Dica: Formatar como dinheiro pode ser feito assim usando o comando `CAST(xxxxxx AS MONEY)`, como em `SELECT CAST(1000 AS MONEY)`
 
 ```sql
+SELECT CONCAT(first_name,' ', last_name) AS nome_completo,
+ CAST(SUM(o.total_amount) AS MONEY) AS total_gasto
+FROM
+    customers c
+JOIN
+    orders o ON o.customer_id = c.customer_id
+GROUP BY
+    c.first_name, c.last_name
+ORDER BY
+    total_gasto DESC
+LIMIT 5;
 
 ```
 
